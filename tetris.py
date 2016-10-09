@@ -37,7 +37,7 @@ class ComputerPlayer:
         # super simple current algorithm: just randomly move left, right, and rotate a few times
         return random.choice("mnb") * random.randint(1, 10)
        
-    # This is the version that's used by the animted version. This is really similar to get_moves,
+    # This is the version that's used by the animated version. This is really similar to get_moves,
     # except that it runs as a separate thread and you should access various methods and data in
     # the "tetris" object to control the movement. In particular:
     #   - tetris.col, tetris.row have the current column and row of the upper-left corner of the 
@@ -91,6 +91,3 @@ except EndOfGame as s:
 
 
 # Making some changes again
-
-
-
