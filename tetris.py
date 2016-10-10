@@ -4,7 +4,39 @@
 from AnimatedTetris import *
 from SimpleTetris import *
 from kbinput import *
+from TetrisGame import *
 import time, sys
+import copy
+debug = 1
+
+# min_height = 8000
+
+def heuristic_height(board):
+    height = [0] * 10
+    # print "In heuristic"
+    # print board
+    for r in range(0, len(board)):
+        for c in range(0, 10):
+            if board[r][c] == 'x' and height[c] == 0:
+                height[c] = len(board) - r
+    # print height
+    agg_ht = 0
+    for h in range(0, len(height)):
+        agg_ht += height[h]
+    return agg_ht
+
+def heuristic_complete(board):
+    complete_lines = 0
+    for r in range(0, len(board)):
+        complete_lines += 1
+        for col in range(0, 10):
+            if board[r][col] == ' ':
+                complete_lines -= 1
+                break
+    return complete_lines
+
+def get_heuristic((board, score)):
+    return heuristic_height(board) - heuristic_complete(board)
 
 class HumanPlayer:
     def get_moves(self, tetris):
@@ -33,9 +65,66 @@ class ComputerPlayer:
     #     issue game commands
     #   - tetris.get_board() returns the current state of the board, as a list of strings.
     #
+
+
     def get_moves(self, tetris):
         # super simple current algorithm: just randomly move left, right, and rotate a few times
-        return random.choice("mnb") * random.randint(1, 10)
+        # Added for testing
+        print tetris.col, tetris.row
+        # print tetris.rotate()
+        # print tetris.get_piece()
+        # print tetris.get_next_piece()
+        print tetris.get_board()
+        b = copy.deepcopy(tetris)
+        board = b.get_board()
+        # score = TetrisGame.get_score(b)
+        score = 0
+        # b.down()
+        min_height = 8000
+        min_col = 20
+        min_row = 20
+        min_rot = 0
+        print len(b.get_board())
+        rotation = 0
+        while (rotation < 4):
+            for row in range(0, len(b.get_board())):
+                for col in range(0, 10):
+                    if board[row][col] != 'x':
+                        if not (TetrisGame.check_collision((board, score), b.piece, row, col)):
+                            ht = get_heuristic(TetrisGame.place_piece((board, score), b.piece, row, col) )
+                            # c_lines = heuristic_complete(TetrisGame.place_piece())
+                            # print "After place piece: "
+                            # print board
+                            if ht <= min_height:
+                                min_height = ht
+                                min_row = row
+                                min_col = col
+                                min_rot = rotation
+
+            rotation += 1
+            b.piece = TetrisGame.rotate_piece(b.piece, 90)
+        # print "number of Cols: " + str(len(b.get_board()[1]))
+        moves = ''
+        if min_rot > 0:
+            for i in range(0, min_rot):
+                moves += 'n'
+
+        if tetris.col - min_col < 0:
+            # print "Reached here"
+            for i in range(0, abs(tetris.col - min_col)):
+                moves += 'm'
+        else:
+            for i in range(0, tetris.col - min_col):
+                moves += 'b'
+        print moves
+        print min_height, min_col, min_row, min_rot
+        print tetris.row - min_row
+        print tetris.col - min_col
+        # print abs(tetris.col - min_col)
+
+        return moves
+
+        # return random.choice("mnb") * random.randint(1, 10)
        
     # This is the version that's used by the animated version. This is really similar to get_moves,
     # except that it runs as a separate thread and you should access various methods and data in
