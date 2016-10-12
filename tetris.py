@@ -13,7 +13,7 @@ debug = 1
 
 def heuristic_height(board):
     height = [0] * 10
-    # print "In heuristic"
+    # print "In heuristic height"
     # print board
     for r in range(0, len(board)):
         for c in range(0, 10):
@@ -38,7 +38,7 @@ def heuristic_complete(board):
 def heuristic_emptiness(board):
     height = [0] * 10
     empty_blocks = 0
-    # print "In heuristic"
+    # print "In heuristic emptiness"
     # print board
     for r in range(0, len(board)):
         for c in range(0, 10):
@@ -64,8 +64,8 @@ def heuristic_holes(board):
 
 def get_heuristic((board, score)):
     # return heuristic_height(board) + heuristic_emptiness(board) - heuristic_complete(board)
-    return (0.25 * heuristic_height(board)) + (0.15 * heuristic_emptiness(board)) + \
-           (0.10 * heuristic_holes(board)) + (-0.50 * heuristic_complete(board))
+    return (1 * heuristic_height(board)) + (0 * heuristic_emptiness(board)) + \
+           (0.25 * heuristic_holes(board)) + (-1 * heuristic_complete(board))
 
 class HumanPlayer:
     def get_moves(self, tetris):
