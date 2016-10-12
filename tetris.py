@@ -35,8 +35,37 @@ def heuristic_complete(board):
                 break
     return complete_lines
 
+def heuristic_emptiness(board):
+    height = [0] * 10
+    empty_blocks = 0
+    # print "In heuristic"
+    # print board
+    for r in range(0, len(board)):
+        for c in range(0, 10):
+            if board[r][c] == 'x' and height[c] == 0:
+                height[c] = len(board) - r
+                if c > 0:
+                    empty_blocks += abs(height[c] - height[c-1])
+    return empty_blocks
+
+def heuristic_holes(board):
+    holes = 0
+    # print "In heuristic"
+    # print board
+    for c in range(0, 10):
+        filled_cells = 0
+        for r in range(0, len(board)):
+            if board[r][c] == 'x':
+                filled_cells = 1
+            else:
+                if board[r][c] == ' ' and filled_cells == 1:
+                    holes += 1
+    return holes
+
 def get_heuristic((board, score)):
-    return heuristic_height(board) - heuristic_complete(board)
+    # return heuristic_height(board) + heuristic_emptiness(board) - heuristic_complete(board)
+    return (0.25 * heuristic_height(board)) + (0.15 * heuristic_emptiness(board)) + \
+           (0.10 * heuristic_holes(board)) + (-0.50 * heuristic_complete(board))
 
 class HumanPlayer:
     def get_moves(self, tetris):
@@ -80,9 +109,9 @@ class ComputerPlayer:
         # score = TetrisGame.get_score(b)
         score = 0
         # b.down()
-        min_height = 8000
-        min_col = 20
-        min_row = 20
+        min_heuristic = 8000
+        min_col = 21
+        min_row = 21
         min_rot = 0
         print len(b.get_board())
         rotation = 0
@@ -91,12 +120,12 @@ class ComputerPlayer:
                 for col in range(0, 10):
                     if board[row][col] != 'x':
                         if not (TetrisGame.check_collision((board, score), b.piece, row, col)):
-                            ht = get_heuristic(TetrisGame.place_piece((board, score), b.piece, row, col) )
+                            new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), b.piece, row, col) )
                             # c_lines = heuristic_complete(TetrisGame.place_piece())
                             # print "After place piece: "
                             # print board
-                            if ht <= min_height:
-                                min_height = ht
+                            if new_heuristic <= min_heuristic:
+                                min_heuristic = new_heuristic
                                 min_row = row
                                 min_col = col
                                 min_rot = rotation
@@ -117,7 +146,7 @@ class ComputerPlayer:
             for i in range(0, tetris.col - min_col):
                 moves += 'b'
         print moves
-        print min_height, min_col, min_row, min_rot
+        print min_heuristic, min_col, min_row, min_rot
         print tetris.row - min_row
         print tetris.col - min_col
         # print abs(tetris.col - min_col)
