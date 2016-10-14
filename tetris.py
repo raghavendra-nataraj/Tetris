@@ -24,14 +24,9 @@ def get_height(board):
     return height
 
 def heuristic_height(board):
-    height = [0] * 10
+    height = get_height(board)
     # print "In heuristic height"
     # print board
-    for r in range(0, len(board)):
-        for c in range(0, 10):
-            if board[r][c] == 'x' and height[c] == 0:
-                height[c] = len(board) - r
-    # print height
     agg_ht = 0
     for h in range(0, len(height)):
         agg_ht += height[h]
