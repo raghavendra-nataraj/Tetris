@@ -86,6 +86,34 @@ def get_heuristic((board, score)):
     return (a * heuristic_height(board)) + (b * heuristic_emptiness(board)) + \
            (c * heuristic_holes(board)) + (d * heuristic_complete(board))
 
+def get_best_move(b):
+    board = b.get_board()
+    score = 0
+    max_heuristic = -8000
+    min_col = 21
+    min_row = 21
+    min_rot = 0
+    print len(b.get_board())
+    rotation = 0
+    height = get_height(board)
+    while rotation < 4:
+        for col in range(0, 10):
+            row = (19 - height[col]) - len(b.piece) + 1
+            if board[row][col] != 'x':
+                if not (TetrisGame.check_collision((board, score), b.piece, row, col)):
+                    new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), b.piece, row, col))
+                    # print "After place piece: "
+                    # print board
+                    if new_heuristic >= max_heuristic:
+                        max_heuristic = new_heuristic
+                        min_row = row
+                        min_col = col
+                        min_rot = rotation
+
+        rotation += 1
+        b.piece = TetrisGame.rotate_piece(b.piece, 90)
+    return max_heuristic, min_col, min_row, min_rot
+
 
 class HumanPlayer:
     def get_moves(self, tetris):
@@ -119,41 +147,10 @@ class ComputerPlayer:
     # Computer Simple
     def get_moves(self, tetris):
         # super simple current algorithm: just randomly move left, right, and rotate a few times
-        # Added for testing
         print tetris.col, tetris.row
-        # print tetris.rotate()
-        # print tetris.get_piece()
-        # print tetris.get_next_piece()
         print tetris.get_board()
-        b = copy.deepcopy(tetris)
-        board = b.get_board()
-        # score = TetrisGame.get_score(b)
-        score = 0
-        # b.down()
-        max_heuristic = -8000
-        min_col = 21
-        min_row = 21
-        min_rot = 0
-        print len(b.get_board())
-        rotation = 0
-        height = get_height(board)
-        while (rotation < 4):
-            for col in range(0, 10):
-                row = (19 - height[col]) - len(b.piece) + 1
-                if board[row][col] != 'x':
-                    if not (TetrisGame.check_collision((board, score), b.piece, row, col)):
-                        new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), b.piece, row, col))
-                        # print "After place piece: "
-                        # print board
-                        if new_heuristic >= max_heuristic:
-                            max_heuristic = new_heuristic
-                            min_row = row
-                            min_col = col
-                            min_rot = rotation
-
-            rotation += 1
-            b.piece = TetrisGame.rotate_piece(b.piece, 90)
-        # print "number of Cols: " + str(len(b.get_board()[1]))
+        # Deleted from here
+        max_heuristic, min_col, min_row, min_rot = get_best_move(copy.deepcopy(tetris))
         moves = ''
         if min_rot > 0:
             for i in range(0, min_rot):
@@ -171,7 +168,6 @@ class ComputerPlayer:
         print tetris.row - min_row
         print tetris.col - min_col
         # print abs(tetris.col - min_col)
-
         return moves
 
         # return random.choice("mnb") * random.randint(1, 10)
