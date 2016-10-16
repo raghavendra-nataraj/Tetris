@@ -85,14 +85,18 @@ def get_heuristic((board, score), ht_diff):
     # print board
     # print "\n" * 3 + ("Score: %d \n" % score) + "|\n".join(board) + "|\n" + "-" * 10
     # Check if the below values should be changed based on the next piece information
-    a = 0.5
-    b = 0.2
-    c = 0.7
-    d = 1
-    # heuristic = (a * heuristic_height(board)) + (b * heuristic_emptiness(board)) + \
-    #        (c * heuristic_holes(board)) + (d * heuristic_complete(board))
-    heuristic = (d * heuristic_complete(board)) -((a * ht_diff) + (b * heuristic_emptiness(board)) + \
-                (c * heuristic_holes(board)) )
+    ht = -0.8
+    emptiness = -0.3
+    holes = -1.5
+    clear_lines = 1.2
+    # heuristic = (ht * heuristic_height(board)) + (emptiness * heuristic_emptiness(board)) + \
+    #        (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
+
+    heuristic = (ht * ht_diff) + (emptiness * heuristic_emptiness(board)) + \
+           (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
+
+    # heuristic = (d * heuristic_complete(board)) -((ht * ht_diff) + (emptiness * heuristic_emptiness(board)) + \
+    #             (holes * heuristic_holes(board)) )
     # print "Heuristic for this board: " + str(heuristic)
     return heuristic
 
