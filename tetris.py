@@ -116,6 +116,7 @@ def get_best_move(board, piece, curr_max_ht):
     min_col = 21
     min_row = 21
     min_rot = 0
+    rot_pieces = []
     if debug == 1:
         print len(board)
     rotation = 0
@@ -123,23 +124,26 @@ def get_best_move(board, piece, curr_max_ht):
     new_max_ht = max(height)
     height_diff = abs(new_max_ht - curr_max_ht)
     while rotation < 3:
-        for col in range(0, 10):
-            # row = (19 - height[col]) - len(piece) + 1
-            row = get_best_row(board, score, piece, col)
-            if row > 0:
-                # print "Best Row for next piece: " + str(row) + " calculated for col:" + str(col)
-                new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), piece, row, col), height_diff)
-                # print "After place piece: "
-                # print board
-                if new_heuristic >= max_heuristic:
-                    max_heuristic = new_heuristic
-                    min_row = row
-                    min_col = col
-                    min_rot = rotation
+        if piece not in rot_pieces:
+            rot_pieces.append(piece)
+            for col in range(0, 10):
+                # row = (19 - height[col]) - len(piece) + 1
+                row = get_best_row(board, score, piece, col)
+                if row > 0:
+                    # print "Best Row for next piece: " + str(row) + " calculated for col:" + str(col)
+                    new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), piece, row, col), height_diff)
+                    # print "After place piece: "
+                    # print board
+                    if new_heuristic >= max_heuristic:
+                        max_heuristic = new_heuristic
+                        min_row = row
+                        min_col = col
+                        min_rot = rotation
 
         rotation += 1
         # print "Rotation of next block:" + str(rotation)
         piece = TetrisGame.rotate_piece(piece, 90)
+    # print "Next piece rotations:" + str(rot_pieces)
     return max_heuristic, min_col, min_row, min_rot
 
 
@@ -194,32 +198,37 @@ class ComputerPlayer:
         next_piece = b.get_next_piece()
         height = get_height(board)
         curr_max_ht = max(height)
+        rot_pieces = []
+        # rot_pieces.append(b.piece)
         while (rotation < 3):
             # Run below for each piece rotation and each possible position of the current piece
-            for col in range(0, 10):
-                # row = (19 - height[col]) - len(b.piece) + 1
-                row = get_best_row(board, score, b.piece, col)
-                if row > 0:
-                    # print "Best Row for current piece: " + str(row)  + " calculated for col:" + str(col)
-                    # print "Reached here"
-                    (next_board, score) = TetrisGame.place_piece((board, score), b.piece, row, col)
-                    # print "Next board for calculating heuristics:"
-                    # print next_board
-                    # print "Original board after place piece:"
-                    # print board
-                    new_heuristic, new_row, new_col, new_rot = get_best_move(next_board, next_piece, curr_max_ht)
-                    if new_heuristic >= max_heuristic:
-                        max_heuristic = new_heuristic
-                        min_row = row
-                        min_col = col
-                        min_rot = rotation
-                    # print "Min row, col and rot" + str(row), str(col), str(rotation)
+            if b.piece not in rot_pieces:
+                rot_pieces.append(b.piece)
+                for col in range(0, 10):
+                    # row = (19 - height[col]) - len(b.piece) + 1
+                    row = get_best_row(board, score, b.piece, col)
+                    if row > 0:
+                        # print "Best Row for current piece: " + str(row)  + " calculated for col:" + str(col)
+                        # print "Reached here"
+                        (next_board, score) = TetrisGame.place_piece((board, score), b.piece, row, col)
+                        # print "Next board for calculating heuristics:"
+                        # print next_board
+                        # print "Original board after place piece:"
+                        # print board
+                        new_heuristic, new_row, new_col, new_rot = get_best_move(next_board, next_piece, curr_max_ht)
+                        if new_heuristic >= max_heuristic:
+                            max_heuristic = new_heuristic
+                            min_row = row
+                            min_col = col
+                            min_rot = rotation
+                        # print "Min row, col and rot" + str(row), str(col), str(rotation)
             rotation += 1
             # print "Rotation of current block:" + str(rotation)
             if debug == 1:
                 print min_col, min_row, min_rot
             b.piece = TetrisGame.rotate_piece(b.piece, 90)
 
+        # print "Current piece rotations:" + str(rot_pieces)
         moves = ''
         if min_rot > 0:
             for i in range(0, min_rot):
@@ -252,13 +261,14 @@ class ComputerPlayer:
     #     issue game commands
     #   - tetris.get_board() returns the current state of the board, as a list of strings.
     #
-    def control_game1(self, tetris):
+    def control_game(self, tetris):
         # another super simple algorithm: just move piece to the least-full column
         moves = []
         while 1:
             time.sleep(0.1)
             board = tetris.get_board()
-            moves = get_moves(tetris)
+            moves = self.get_moves(tetris)
+            print "Moves: " + str(moves)
             # column_heights = [min([r for r in range(len(board) - 1, 0, -1) if board[r][c] == "x"] + [100, ]) for c in
             #                   range(0, len(board[0]))]
             # index = column_heights.index(max(column_heights))
@@ -278,7 +288,7 @@ class ComputerPlayer:
 
 
 
-    def control_game(self, tetris):
+    def control_game1(self, tetris):
         # another super simple algorithm: just move piece to the least-full column
         while 1:
             time.sleep(0.1)
