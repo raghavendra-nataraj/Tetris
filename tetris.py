@@ -85,14 +85,14 @@ def get_heuristic((board, score), ht_diff):
     # print board
     # print "\n" * 3 + ("Score: %d \n" % score) + "|\n".join(board) + "|\n" + "-" * 10
     # Check if the below values should be changed based on the next piece information
-    a = -0.3
-    b = -0.2
-    c = -0.8
+    a = 0.5
+    b = 0.2
+    c = 0.7
     d = 1
     # heuristic = (a * heuristic_height(board)) + (b * heuristic_emptiness(board)) + \
     #        (c * heuristic_holes(board)) + (d * heuristic_complete(board))
-    heuristic = (a * ht_diff) + (b * heuristic_emptiness(board)) + \
-                (c * heuristic_holes(board)) + (d * heuristic_complete(board))
+    heuristic = (d * heuristic_complete(board)) -((a * ht_diff) + (b * heuristic_emptiness(board)) + \
+                (c * heuristic_holes(board)) )
     # print "Heuristic for this board: " + str(heuristic)
     return heuristic
 
@@ -134,7 +134,7 @@ def get_best_move(board, piece, curr_max_ht):
                     new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), piece, row, col), height_diff)
                     # print "After place piece: "
                     # print board
-                    if new_heuristic >= max_heuristic:
+                    if new_heuristic > max_heuristic:
                         max_heuristic = new_heuristic
                         min_row = row
                         min_col = col
@@ -216,7 +216,7 @@ class ComputerPlayer:
                         # print "Original board after place piece:"
                         # print board
                         new_heuristic, new_row, new_col, new_rot = get_best_move(next_board, next_piece, curr_max_ht)
-                        if new_heuristic >= max_heuristic:
+                        if new_heuristic > max_heuristic:
                             max_heuristic = new_heuristic
                             min_row = row
                             min_col = col
@@ -268,20 +268,21 @@ class ComputerPlayer:
             time.sleep(0.1)
             board = tetris.get_board()
             moves = self.get_moves(tetris)
-            print "Moves: " + str(moves)
+            # print "Moves: " + str(moves)
             # column_heights = [min([r for r in range(len(board) - 1, 0, -1) if board[r][c] == "x"] + [100, ]) for c in
             #                   range(0, len(board[0]))]
             # index = column_heights.index(max(column_heights))
             # print column_heights
             # print index
             # for i in moves:
-            i = moves[0]
-            if i == 'b':
-                tetris.left()
-            elif i == 'm':
-                tetris.right()
-            elif i == 'n':
-                tetris.rotate()
+            if len(moves) > 0:
+                i = moves[0]
+                if i == 'b':
+                    tetris.left()
+                elif i == 'm':
+                    tetris.right()
+                elif i == 'n':
+                    tetris.rotate()
             else:
                 tetris.down()
 
@@ -291,7 +292,7 @@ class ComputerPlayer:
     def control_game1(self, tetris):
         # another super simple algorithm: just move piece to the least-full column
         while 1:
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
             board = tetris.get_board()
             column_heights = [ min([ r for r in range(len(board)-1, 0, -1) if board[r][c] == "x"  ] + [100,] ) for c in range(0, len(board[0]) ) ]
