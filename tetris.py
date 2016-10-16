@@ -89,8 +89,8 @@ def get_heuristic((board, score), ht_diff):
     b = -0.2
     c = -0.8
     d = 1
-    heuristic = (a * heuristic_height(board)) + (b * heuristic_emptiness(board)) + \
-           (c * heuristic_holes(board)) + (d * heuristic_complete(board))
+    # heuristic = (a * heuristic_height(board)) + (b * heuristic_emptiness(board)) + \
+    #        (c * heuristic_holes(board)) + (d * heuristic_complete(board))
     heuristic = (a * ht_diff) + (b * heuristic_emptiness(board)) + \
                 (c * heuristic_holes(board)) + (d * heuristic_complete(board))
     # print "Heuristic for this board: " + str(heuristic)
