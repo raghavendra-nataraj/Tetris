@@ -8,7 +8,7 @@ c. Goal State, G: {S| S such that maximum lines are cleared from the board, i.e.
 d. Successor function, Succ(S) = {S' | S' is a list of boards with the falling piece rotated in all possible ways and placed in all possible places on the current board}
 e. Cost Function = The cost function is not much of a factor here since we will either reach or lose the game. So we can keep it a constant, i.e., one for each piece kept on the board
 f. Heuristic function defined: The heuristic function used in the program is based on below 4 things -
-(i) The increase in the maximum height of the board after a given piece is placed on the board
+(i) The increase in the aggregated height of the board after a given piece is placed on the board
 (ii) The total number of holes created in the board after a given piece is placed on the board
 (iii) The sum of difference in heights of the adjacent columns after a given piece is placed on the board
 (iv) The number of completed lines, i.e., lines that will be cleared and added to the score, after a given piece is placed on the board.

@@ -30,10 +30,10 @@
       <file leaf-file-name="tetris.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tetris.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
-                <element signature="e#3650#3678#0" expanded="true" />
+                <element signature="e#3653#3681#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -551,7 +551,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3650#3678#0" expanded="true" />
+            <element signature="e#3653#3681#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -585,7 +585,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3650#3678#0" expanded="true" />
+            <element signature="e#3653#3681#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -619,7 +619,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3650#3678#0" expanded="true" />
+            <element signature="e#3653#3681#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -653,7 +653,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3650#3678#0" expanded="true" />
+            <element signature="e#3653#3681#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -687,7 +687,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3650#3678#0" expanded="true" />
+            <element signature="e#3653#3681#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -756,10 +756,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tetris.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#3650#3678#0" expanded="true" />
+            <element signature="e#3653#3681#0" expanded="true" />
           </folding>
         </state>
       </provider>
