@@ -105,13 +105,16 @@ def heuristic_holes(board):
     return holes
 
 
-def get_heuristic((board, score), ht_diff):
+def get_heuristic((board, score), curr_max_ht):
     # print "Board in get heuristics:"
     # print board
     # print "\n" * 3 + ("Score: %d \n" % score) + "|\n".join(board) + "|\n" + "-" * 10
-    ht = -0.8
-    emptiness = -0.5
-    holes = -2
+    height = get_height(board)
+    new_max_ht = max(height)
+    ht_diff = abs(new_max_ht - curr_max_ht)
+    ht = -0.6
+    emptiness = -0.7
+    holes = -1.7
     clear_lines = 1.2
     # heuristic = (ht * heuristic_height(board)) + (emptiness * heuristic_emptiness(board)) + \
     #        (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
@@ -148,9 +151,9 @@ def get_best_move(board, piece, curr_max_ht):
     if debug == 1:
         print len(board)
     rotation = 0
-    height = get_height(board)
-    new_max_ht = max(height)
-    height_diff = abs(new_max_ht - curr_max_ht)
+    # height = get_height(board)
+    # new_max_ht = max(height)
+    # height_diff = abs(new_max_ht - curr_max_ht)
     while rotation < 3:
         if piece not in rot_pieces:
             rot_pieces.append(piece)
@@ -159,7 +162,7 @@ def get_best_move(board, piece, curr_max_ht):
                 row = get_best_row(board, score, piece, col)
                 if row > 0:
                     # print "Best Row for next piece: " + str(row) + " calculated for col:" + str(col)
-                    new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), piece, row, col), height_diff)
+                    new_heuristic = get_heuristic(TetrisGame.place_piece((board, score), piece, row, col), curr_max_ht)
                     # print "After place piece: "
                     # print board
                     if new_heuristic > max_heuristic:
@@ -186,7 +189,6 @@ class HumanPlayer:
             c = get_char_keyboard()
             commands = {"b": tetris.left, "n": tetris.rotate, "m": tetris.right, " ": tetris.down}
             commands[c]()
-
 
 #####
 # This is the part you'll want to modify!
