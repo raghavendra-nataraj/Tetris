@@ -1,6 +1,31 @@
 # Simple Tetris implemented with max_heuristic and updated code for emptiness
 # Simple tetris program! v0.2
 # D. Crandall, Sept 2016
+''' 1. Abstraction for problem 2:
+a. Valid State, S: Any arrangement of pieces on a 20*10 board with a piece falling from top
+b. Initial state, S0: Empty board one piece and score 0
+c. Goal State, G: {S| S such that maximum lines are cleared from the board, i.e., achieve the highest possible score before the board fills up}
+d. Successor function, Succ(S) = {S' | S' is a list of boards with the falling piece rotated in all possible ways and placed in all possible places on the current board}
+e. Cost Function = The cost function is not much of a factor here since we will either reach or lose the game. So we can keep it a constant, i.e., one for each piece kept on the board
+f. Heuristic function defined: The heuristic function used in the program is based on below 4 things -
+(i) The increase in the maximum height of the board after a given piece is placed on the board
+(ii) The total number of holes created in the board after a given piece is placed on the board
+(iii) The sum of difference in heights of the adjacent columns after a given piece is placed on the board
+(iv) The number of completed lines, i.e., lines that will be cleared and added to the score, after a given piece is placed on the board.
+
+All these 4 factors are assigned some weight based on how much they contribute in improving the score. The above 3 factors are assigned negative weights since they would reduce the score whereas completed lines would contribute in getting a higher score. The sum of all these weighted factors gives the final heuristic value. The one with the highest heuristic value is then selected to select the best possible successor board.
+
+2. Description of how the program works:
+The basic idea implemented in the algorithm is to use the A* search and select the best possible place for keeping a current piece. It first takes the current board and then checks every available position in each column for collision with the current piece. It selects the row which is just above the one where the first collision is found for each column. In this way, the algorithm finds a possible spot in each of the possible columns to keep the current piece (for all possible rotations of the piece).
+Next, it checks for the non-colliding position in the same way for the next piece in the board which is a copy of the original board and has the current piece placed in one of the above found non-colliding positions. Using this board, it calculates the heuristics (explained in point 1) for each of the possible successor boards. It then selects the position for the current piece based on the highest heuristic value obtained after keeping both the current and next piece on the copy of the current board.
+
+The animated version is implemented in a similar way except that it checks for the best possible position after making each move, i.e., after each left, right or rotation of the piece.
+
+3. Problems faced and design decision made:
+The main problem that we faced in implementing the algorithm was deciding the weights for each of the four factors of the heuristic function. For this, we did test our code with various combinations of weights. Sometimes, the program ran endlessly giving high scores whereas sometimes it would end giving a low score. Thus, we did testing and came up with the final weight combinations that gave a high score on an average in 5 runs.
+
+'''
+
 
 from AnimatedTetris import *
 from SimpleTetris import *
@@ -84,10 +109,9 @@ def get_heuristic((board, score), ht_diff):
     # print "Board in get heuristics:"
     # print board
     # print "\n" * 3 + ("Score: %d \n" % score) + "|\n".join(board) + "|\n" + "-" * 10
-    # Check if the below values should be changed based on the next piece information
     ht = -0.8
-    emptiness = -0.3
-    holes = -1.5
+    emptiness = -0.5
+    holes = -2
     clear_lines = 1.2
     # heuristic = (ht * heuristic_height(board)) + (emptiness * heuristic_emptiness(board)) + \
     #        (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
@@ -272,13 +296,6 @@ class ComputerPlayer:
             time.sleep(0.1)
             board = tetris.get_board()
             moves = self.get_moves(tetris)
-            # print "Moves: " + str(moves)
-            # column_heights = [min([r for r in range(len(board) - 1, 0, -1) if board[r][c] == "x"] + [100, ]) for c in
-            #                   range(0, len(board[0]))]
-            # index = column_heights.index(max(column_heights))
-            # print column_heights
-            # print index
-            # for i in moves:
             if len(moves) > 0:
                 i = moves[0]
                 if i == 'b':
@@ -289,26 +306,6 @@ class ComputerPlayer:
                     tetris.rotate()
             else:
                 tetris.down()
-
-
-
-
-    def control_game1(self, tetris):
-        # another super simple algorithm: just move piece to the least-full column
-        while 1:
-            # time.sleep(0.1)
-
-            board = tetris.get_board()
-            column_heights = [ min([ r for r in range(len(board)-1, 0, -1) if board[r][c] == "x"  ] + [100,] ) for c in range(0, len(board[0]) ) ]
-            index = column_heights.index(max(column_heights))
-
-            if(index < tetris.col):
-                tetris.left()
-            elif(index > tetris.col):
-                tetris.right()
-            else:
-                tetris.down()
-
 
 
 ###################
