@@ -24,6 +24,9 @@ The animated version is implemented in a similar way except that it checks for t
 3. Problems faced and design decision made:
 The main problem that we faced in implementing the algorithm was deciding the weights for each of the four factors of the heuristic function. For this, we did test our code with various combinations of weights. Sometimes, the program ran endlessly giving high scores whereas sometimes it would end giving a low score. Thus, we did testing and came up with the final weight combinations that gave a high score on an average in 5 runs.
 
+The idea of the above heuristics was inspired from the below:
+https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
+
 '''
 
 
@@ -112,15 +115,15 @@ def get_heuristic((board, score), curr_max_ht):
     height = get_height(board)
     new_max_ht = max(height)
     ht_diff = abs(new_max_ht - curr_max_ht)
-    ht = -0.6
-    emptiness = -0.7
+    ht = -0.3
+    emptiness = -0.4
     holes = -1.7
-    clear_lines = 1.2
-    # heuristic = (ht * heuristic_height(board)) + (emptiness * heuristic_emptiness(board)) + \
-    #        (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
-
-    heuristic = (ht * ht_diff) + (emptiness * heuristic_emptiness(board)) + \
+    clear_lines = 0.9
+    heuristic = (ht * heuristic_height(board)) + (emptiness * heuristic_emptiness(board)) + \
            (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
+
+    # heuristic = (ht * ht_diff) + (emptiness * heuristic_emptiness(board)) + \
+    #        (holes * heuristic_holes(board)) + (clear_lines * heuristic_complete(board))
 
     # heuristic = (d * heuristic_complete(board)) -((ht * ht_diff) + (emptiness * heuristic_emptiness(board)) + \
     #             (holes * heuristic_holes(board)) )
