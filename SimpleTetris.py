@@ -15,7 +15,7 @@ class SimpleTetris(TetrisGame):
     COMMANDS = { "b": self.left, "n": self.rotate, "m": self.right }
     while 1:
       self.print_board(False)
-      moves = player.get_moves(self.piece, self.state[0])
+      moves = player.get_moves(self)
       for c in moves:
         if c in COMMANDS:
           COMMANDS[c]()

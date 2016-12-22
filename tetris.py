@@ -1,6 +1,6 @@
 # Simple tetris program! v0.1
 # D. Crandall, Sept 2016
-
+import operator
 from AnimatedTetris import *
 from SimpleTetris import *
 from kbinput import *
@@ -28,9 +28,98 @@ class ComputerPlayer:
     # position. The commands are a string of letters, where b and m represent left and right, respectively,
     # and n rotates. 
     #
-    def get_moves(self, piece, board):
+
+    def get_height(self,board):
+        count = 0
+        for row in board:
+            if row.strip()=='':
+                count+=1
+        return len(board)-count
+
+    def get_aggr_height(self,board):
+        hieghts = [0]*len(board[0])
+        for index in range(len(board)-1,-1,-1):
+            row = board[index]
+            for rindex,item in enumerate(row):
+                if item=='x':
+                    hieghts[rindex]=len(board)-index
+        bumpiness = [abs(hieghts[i]-hieghts[i-1]) for i in range(1,len(hieghts))]
+        return sum(hieghts),sum(bumpiness)
+
+    def get_holes(self,board):
+        holes = 0
+        encounter = [0]*len(board[0])
+        for index,row in enumerate(board):
+            for rindex,item in enumerate(row):
+                if item=='x':
+                    encounter[rindex] = 1
+                if item==' ' and encounter[rindex]==1:
+                    holes+=1
+        return holes
+
+    def lines_complete(self,board):
+        count = 0
+        for row in board:
+            if row.count('x')==len(row):
+                count+=1
+        return count
+        
+    def get_row(self,board,col,piece):
+        rowc = 0
+        for row in board:
+            if not TetrisGame.check_collision((board,0),piece,rowc+1,col):
+                rowc+=1
+            else:
+                return rowc
+
+    def calc_heuristics(self,board,row,col,piece):
+        clf = 2
+        bf = -0.4
+        hf = -1.7
+        ahf = -0.3
+        agr_hieght,bumpiness = self.get_aggr_height(board)
+        clear_lines = self.lines_complete(board)
+        holes = self.get_holes(board)
+        heuristic = (clf *clear_lines)  + (bf * bumpiness) + (ahf * agr_hieght) + (hf * holes) 
+        #print agr_hieght,bumpiness,clear_lines,holes,heuristic
+        return heuristic
+                
+    def get_best_moves(self,tetris):
+        board = tetris.get_board()
+        piece = tetris.piece
+        pieces = [TetrisGame.rotate_piece(piece,i) for i in [0,90,180,270]]
+        heu = []
+        for onep in pieces:
+            for col in range(0,len(board[0])):
+                row = self.get_row(board,col,onep)
+                if row > 0:
+                    #print col
+                    board1,score = TetrisGame.place_piece((board,0),onep,row,col)
+                    h = self.calc_heuristics(board1,row,col,onep)
+                    heu.append([row,col,onep,h])
+        #print heu
+        #print max(heu,key=operator.itemgetter(3))
+        min_row,min_col,min_piece,h =  max(heu,key=operator.itemgetter(3))
+        moves = ""
+        for i in [270,180,90,0]:
+            if TetrisGame.rotate_piece(piece,i) != min_piece:
+                moves+='n'
+        print min_col
+        if min_col>tetris.col:
+            temp_moves = "m"*(min_col-tetris.col)
+        else:
+            temp_moves = "b"*(tetris.col-min_col)
+        moves+=temp_moves
+        return moves
+                
+        
+
+    def get_moves(self, tetris):
         # super simple current algorithm: just randomly move left, right, and rotate a few times
-        return random.choice("mnb") * random.randint(1, 10)
+        #return random.choice("mnb") * random.randint(1, 10)
+        moves = self.get_best_moves(tetris)
+        #raw_input()
+        return moves
        
     # This is the version that's used by the animted version. This is really similar to get_moves,
     # except that it runs as a separate thread and you should access various methods and data in
