@@ -73,15 +73,16 @@ class ComputerPlayer:
                 return rowc
 
     def calc_heuristics(self,board,row,col,piece):
-        clf = 2
-        bf = -0.4
-        hf = -1.7
-        ahf = -0.3
+        
+        clf = 0.70666#0.9
+        bf = -0.184483#-0.3
+        hf =-0.35663 #-1.7
+        ahf = -0.510066#-0.4
         agr_hieght,bumpiness = self.get_aggr_height(board)
         clear_lines = self.lines_complete(board)
         holes = self.get_holes(board)
         heuristic = (clf *clear_lines)  + (bf * bumpiness) + (ahf * agr_hieght) + (hf * holes) 
-        #print agr_hieght,bumpiness,clear_lines,holes,heuristic
+        #print clear_lines
         return heuristic
                 
     def get_best_moves(self,tetris):
@@ -94,6 +95,7 @@ class ComputerPlayer:
                 row = self.get_row(board,col,onep)
                 if row > 0:
                     #print col
+                    #print self.get_aggr_height(board)
                     board1,score = TetrisGame.place_piece((board,0),onep,row,col)
                     h = self.calc_heuristics(board1,row,col,onep)
                     heu.append([row,col,onep,h])
@@ -101,10 +103,13 @@ class ComputerPlayer:
         #print max(heu,key=operator.itemgetter(3))
         min_row,min_col,min_piece,h =  max(heu,key=operator.itemgetter(3))
         moves = ""
-        for i in [270,180,90,0]:
-            if TetrisGame.rotate_piece(piece,i) != min_piece:
-                moves+='n'
-        print min_col
+        turns = {0:"",90:"n",180:"nn",270:"nnn"}
+        for i in [0,90,180,270]:
+            #print piece,min_piece
+            if TetrisGame.rotate_piece(piece,i) == min_piece:
+                moves+=turns[i]
+                break
+        #print min_col
         if min_col>tetris.col:
             temp_moves = "m"*(min_col-tetris.col)
         else:
@@ -118,6 +123,7 @@ class ComputerPlayer:
         # super simple current algorithm: just randomly move left, right, and rotate a few times
         #return random.choice("mnb") * random.randint(1, 10)
         moves = self.get_best_moves(tetris)
+        #print moves
         #raw_input()
         return moves
        
