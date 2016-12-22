@@ -142,16 +142,21 @@ class ComputerPlayer:
         while 1:
             time.sleep(0.1)
 
-            board = tetris.get_board()
-            column_heights = [ min([ r for r in range(len(board)-1, 0, -1) if board[r][c] == "x"  ] + [100,] ) for c in range(0, len(board[0]) ) ]
-            index = column_heights.index(max(column_heights))
-
-            if(index < tetris.col):
-                tetris.left()
-            elif(index > tetris.col):
-                tetris.right()
+            #board = tetris.get_board()
+            #column_heights = [ min([ r for r in range(len(board)-1, 0, -1) if board[r][c] == "x"  ] + [100,] ) for c in range(0, len(board[0]) ) ]
+            #index = column_heights.index(max(column_heights))
+            moves = self.get_moves(tetris)
+            if len(moves)>0:
+                move = moves[0]
+                if move == "n":
+                    tetris.rotate()
+                if move == "b":
+                    tetris.left()
+                if move == "m":
+                    tetris.right()
             else:
                 tetris.down()
+            
 
 
 ###################
