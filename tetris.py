@@ -72,8 +72,29 @@ class ComputerPlayer:
             else:
                 return rowc
 
-    def calc_heuristics(self,board,row,col,piece):
+    def calc_heuristics_w_n(self,board,row,col,piece,npiece):
         
+        pieces = [TetrisGame.rotate_piece(npiece,i) for i in [0,90,180,270]]
+        #pieces = set(pieces)
+        pieces = list(pieces)
+        heu = []
+        for onep in pieces:
+            for ncol in range(0,len(board[0])):
+                nrow = self.get_row(board,ncol,onep)
+                if nrow>0:
+                    board1,score = TetrisGame.place_piece((board,0),onep,nrow,ncol)
+                    clf = 0.70666#0.9
+                    bf = -0.184483#-0.3
+                    hf =-0.35663 #-1.7
+                    ahf = -0.510066#-0.4
+                    agr_hieght,bumpiness = self.get_aggr_height(board1)
+                    clear_lines = self.lines_complete(board1)
+                    holes = self.get_holes(board1)
+                    heu.append((clf *clear_lines)  + (bf * bumpiness) + (ahf * agr_hieght) + (hf * holes) )
+        #print clear_lines
+        return max(heu)
+    
+    def calc_heuristics(self,board,row,col,piece):
         clf = 0.70666#0.9
         bf = -0.184483#-0.3
         hf =-0.35663 #-1.7
@@ -81,14 +102,17 @@ class ComputerPlayer:
         agr_hieght,bumpiness = self.get_aggr_height(board)
         clear_lines = self.lines_complete(board)
         holes = self.get_holes(board)
-        heuristic = (clf *clear_lines)  + (bf * bumpiness) + (ahf * agr_hieght) + (hf * holes) 
+        return ((clf *clear_lines)  + (bf * bumpiness) + (ahf * agr_hieght) + (hf * holes) )
         #print clear_lines
-        return heuristic
-                
+    
+            
     def get_best_moves(self,tetris):
         board = tetris.get_board()
         piece = tetris.piece
         pieces = [TetrisGame.rotate_piece(piece,i) for i in [0,90,180,270]]
+        #pieces = set(pieces)
+        #pieces = list(pieces)
+        #print pieces
         heu = []
         for onep in pieces:
             for col in range(0,len(board[0])):
@@ -97,7 +121,8 @@ class ComputerPlayer:
                     #print col
                     #print self.get_aggr_height(board)
                     board1,score = TetrisGame.place_piece((board,0),onep,row,col)
-                    h = self.calc_heuristics(board1,row,col,onep)
+                    #h = self.calc_heuristics(board1,row,col,onep)
+                    h = self.calc_heuristics_w_n(board1,row,col,onep,tetris.get_next_piece())
                     heu.append([row,col,onep,h])
         #print heu
         #print max(heu,key=operator.itemgetter(3))
