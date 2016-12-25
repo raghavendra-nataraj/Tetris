@@ -1,6 +1,7 @@
 # Simple tetris program! v0.1
 # D. Crandall, Sept 2016
 import operator
+from copy import deepcopy
 from AnimatedTetris import *
 from SimpleTetris import *
 from kbinput import *
@@ -72,14 +73,15 @@ class ComputerPlayer:
             else:
                 return rowc
 
-    def calc_heuristics_w_n(self,board,row,col,piece,npiece):
+    def calc_heuristics_w_n(self,brd,row,col,piece,npiece):
         
         pieces = [TetrisGame.rotate_piece(npiece,i) for i in [0,90,180,270]]
         #pieces = set(pieces)
         pieces = list(pieces)
         heu = []
         for onep in pieces:
-            for ncol in range(0,len(board[0])):
+            for ncol in range(0,len(brd[0])):
+                board = deepcopy(brd)
                 nrow = self.get_row(board,ncol,onep)
                 if nrow>0:
                     board1,score = TetrisGame.place_piece((board,0),onep,nrow,ncol)
@@ -96,10 +98,10 @@ class ComputerPlayer:
         return max(heu,key=operator.itemgetter(3))
     
     def calc_heuristics(self,board,row,col,piece):
-        clf = 1.70666#0.9
-        bf = -0.2304483#-0.3
-        hf =-0.50663 #-1.7
-        ahf = -0.510066#-0.4
+        clf = 0.76#0.9
+        bf = -0.18#-0.3
+        hf =-0.35 #-1.7
+        ahf = -0.51#-0.4
         agr_hieght,bumpiness = self.get_aggr_height(board)
         clear_lines = self.lines_complete(board)
         holes = self.get_holes(board)
@@ -107,8 +109,9 @@ class ComputerPlayer:
         #print clear_lines
     
             
-    def get_best_moves(self,tetris):
-        board = tetris.get_board()
+    def get_best_moves(self,tet):
+        tetris = deepcopy(tet)
+        brd = tetris.get_board()
         piece = tetris.piece
         if self.next_conf!=None:
             min_row,min_col,min_piece = self.next_conf
@@ -120,7 +123,9 @@ class ComputerPlayer:
             #print pieces
             heu = []
             for onep in pieces:
-                for col in range(0,len(board[0])):
+                for col in range(0,len(brd[0])):
+                    tetris = deepcopy(tet)
+                    board = deepcopy(brd)
                     row = self.get_row(board,col,onep)
                     if row > 0:
                         #print col
@@ -153,6 +158,8 @@ class ComputerPlayer:
         # super simple current algorithm: just randomly move left, right, and rotate a few times
         #return random.choice("mnb") * random.randint(1, 10)
         moves = self.get_best_moves(tetris)
+        print self.get_holes(tetris.get_board())
+        print self.get_aggr_height(tetris.get_board())
         #print moves
         #raw_input()
         return moves
