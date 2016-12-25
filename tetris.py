@@ -83,9 +83,9 @@ class ComputerPlayer:
                 nrow = self.get_row(board,ncol,onep)
                 if nrow>0:
                     board1,score = TetrisGame.place_piece((board,0),onep,nrow,ncol)
-                    clf = 0.70666#0.9
-                    bf = -0.184483#-0.3
-                    hf =-0.35663 #-1.7
+                    clf = 2.70666#0.9
+                    bf = -0.584483#-0.3
+                    hf =-1.20663 #-1.7
                     ahf = -0.510066#-0.4
                     agr_hieght,bumpiness = self.get_aggr_height(board1)
                     clear_lines = self.lines_complete(board1)
